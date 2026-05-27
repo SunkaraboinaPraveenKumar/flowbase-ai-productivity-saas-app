@@ -90,6 +90,17 @@ export async function PUT(req: Request) {
       updatedAt: new Date(),
     }).where(and(eq(notes.id, id), eq(notes.userId, user.id))).returning();
 
+    try {
+      await db.insert(activityLog).values({
+        userId: user.id,
+        action: 'Updated Note',
+        entityType: 'note',
+        entityId: id,
+      });
+    } catch (logErr) {
+      console.error('Notes PUT activityLog error:', logErr);
+    }
+
     return NextResponse.json({ success: true, note: updated[0] });
   } catch (error) {
     console.error('Notes PUT error:', error);
@@ -111,6 +122,17 @@ export async function DELETE(req: Request) {
     if (!id) return NextResponse.json({ error: 'ID required' }, { status: 400 });
 
     await db.delete(notes).where(and(eq(notes.id, id), eq(notes.userId, user.id)));
+
+    try {
+      await db.insert(activityLog).values({
+        userId: user.id,
+        action: 'Deleted Note',
+        entityType: 'note',
+        entityId: id,
+      });
+    } catch (logErr) {
+      console.error('Notes DELETE activityLog error:', logErr);
+    }
 
     return NextResponse.json({ success: true });
   } catch (error) {

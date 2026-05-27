@@ -13,6 +13,7 @@ export default function WhiteboardPage() {
   const [saving, setSaving] = useState(false);
   const [editingTitle, setEditingTitle] = useState(false);
   const [editingTitleValue, setEditingTitleValue] = useState('');
+  const [apiReady, setApiReady] = useState(false);
   const excalidrawAPIRef = useRef<any>(null);
   const debounceTimerRef = useRef<NodeJS.Timeout | null>(null);
 
@@ -40,6 +41,7 @@ export default function WhiteboardPage() {
 
   const handleSelectBoard = (id: string) => {
     setActiveBoardId(id);
+    setApiReady(false);
     excalidrawAPIRef.current = null;
   };
 
@@ -124,53 +126,228 @@ export default function WhiteboardPage() {
 
   const handleCanvasChange = (elements: any[]) => {
     if (!activeBoardId) return;
+    
+    const safeElements = Array.isArray(elements) ? elements : [];
+    // Capture these NOW — they must not be stale inside the setTimeout closure
+    const boardId = activeBoardId;
+
     if (debounceTimerRef.current) clearTimeout(debounceTimerRef.current);
     debounceTimerRef.current = setTimeout(async () => {
       setSaving(true);
       try {
-        const activeBoard = boards.find(b => b.id === activeBoardId);
-        if (!activeBoard) return;
+        // Re-read boards from the functional updater to avoid stale closure
+        let boardName = '';
+        setBoards(prev => {
+          const b = prev.find(x => x.id === boardId);
+          boardName = b?.name ?? '';
+          return prev; // no-op update just to read current state
+        });
+
+        if (!boardName) {
+          // fallback: read from DOM state if setter trick fails
+          setSaving(false);
+          return;
+        }
+
+        const serialized = JSON.stringify(safeElements);
         const res = await fetch('/api/whiteboard', {
           method: 'PUT',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ id: activeBoardId, name: activeBoard.name, data: JSON.stringify(elements) }),
+          body: JSON.stringify({ id: boardId, name: boardName, data: serialized }),
         });
-        if (!res.ok) {
+
+        if (res.ok) {
+          // ── KEY FIX: update local boards state so switching boards & coming back
+          // shows the latest saved data, without needing a full re-fetch every save ──
+          setBoards(prev => prev.map(b =>
+            b.id === boardId ? { ...b, data: serialized } : b
+          ));
+        } else {
           console.error('Failed to save canvas:', res.status);
         }
       } catch (e) { 
         console.error('Canvas save error:', e); 
+      } finally { 
+        setSaving(false); 
       }
-      finally { setSaving(false); }
-    }, 2000);
+    }, 1500);
+  };
+
+  // Standalone save helper — used by handleGenerateDiagram to persist immediately
+  // without relying on onChange (which Excalidraw may not fire for programmatic updateScene calls)
+  const saveElementsNow = async (boardId: string, elements: any[]) => {
+    try {
+      const serialized = JSON.stringify(elements);
+      // Read latest board name without stale closure
+      let boardName = '';
+      setBoards(prev => {
+        const b = prev.find(x => x.id === boardId);
+        boardName = b?.name ?? '';
+        return prev;
+      });
+      if (!boardName) return;
+
+      const res = await fetch('/api/whiteboard', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id: boardId, name: boardName, data: serialized }),
+      });
+
+      if (res.ok) {
+        setBoards(prev => prev.map(b =>
+          b.id === boardId ? { ...b, data: serialized } : b
+        ));
+        console.log('[saveElementsNow] Saved', elements.length, 'elements for board', boardId);
+      } else {
+        console.error('[saveElementsNow] Save failed:', res.status);
+      }
+    } catch (err) {
+      console.error('[saveElementsNow] Error:', err);
+    }
+  };
+
+  const normalizeElement = (el: any) => {
+    const isArrow = el.type === 'arrow' || el.type === 'line';
+    const isText = el.type === 'text';
+
+    // Arrow/line elements MUST have a valid points array — Excalidraw crashes otherwise
+    const defaultPoints = [[0, 0], [Number(el.width) || 100, 0]];
+    const rawPoints = el.points;
+    const safePoints = Array.isArray(rawPoints) && rawPoints.length >= 2
+      ? rawPoints.map((p: any) => [Number(p[0]) || 0, Number(p[1]) || 0])
+      : isArrow ? defaultPoints : undefined;
+
+    const base: any = {
+      id: el.id || `el-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`,
+      type: el.type || 'rectangle',
+      x: Number(el.x) || 0,
+      y: Number(el.y) || 0,
+      width: Number(el.width) || (isText ? 120 : 140),
+      height: Number(el.height) || (isText ? 25 : 60),
+      angle: el.angle || 0,
+      strokeColor: el.strokeColor || '#1e3a8a',
+      backgroundColor: el.backgroundColor || 'transparent',
+      fillStyle: el.fillStyle || 'solid',
+      strokeWidth: el.strokeWidth || 2,
+      roughness: el.roughness ?? 1,
+      opacity: el.opacity ?? 100,
+      // ── Required Excalidraw internal fields ──
+      // These MUST be present and correct types — Excalidraw reads .length on them internally
+      groupIds: Array.isArray(el.groupIds) ? el.groupIds : [],
+      boundElements: Array.isArray(el.boundElements) ? el.boundElements : null,
+      updated: el.updated || Date.now(),
+      isDeleted: false,
+      version: el.version || 1,
+      versionNonce: el.versionNonce || Math.floor(Math.random() * 1_000_000),
+      roundness: el.roundness ?? null,
+      link: el.link ?? null,
+      locked: el.locked ?? false,
+      frameId: el.frameId ?? null,
+    };
+
+    if (isText) {
+      return {
+        ...base,
+        text: el.text || '',
+        fontSize: el.fontSize || 16,
+        fontFamily: el.fontFamily || 1,
+        textAlign: el.textAlign || 'left',
+        verticalAlign: el.verticalAlign || 'top',
+        containerId: el.containerId ?? null,
+        originalText: el.text || '',
+        lineHeight: el.lineHeight || 1.25,
+        autoResize: el.autoResize ?? true,
+        // Always force dark text — AI sometimes ignores the system prompt and returns light colors
+        strokeColor: '#1a1a2e',
+        backgroundColor: 'transparent',
+      };
+    }
+
+    if (isArrow) {
+      return {
+        ...base,
+        points: safePoints,
+        lastCommittedPoint: el.lastCommittedPoint ?? null,
+        startBinding: el.startBinding ?? null,
+        endBinding: el.endBinding ?? null,
+        startArrowhead: el.startArrowhead ?? null,
+        endArrowhead: el.endArrowhead ?? 'arrow',
+        elbowed: el.elbowed ?? false,
+      };
+    }
+
+    return base;
   };
 
   const handleGenerateDiagram = (elements: any[]) => {
     console.log('handleGenerateDiagram called with elements:', elements);
-    if (!elements || elements.length === 0) return;
+    if (!elements || !Array.isArray(elements) || elements.length === 0) return;
     
-    // Wait a tick to ensure API is ready, then update scene immediately
-    setTimeout(() => {
-      if (excalidrawAPIRef.current) {
+    // Capture boardId NOW — by the time async retries run, activeBoardId may change
+    const boardId = activeBoardId;
+    if (!boardId) return;
+
+    const attemptUpdate = (retries = 0) => {
+      const api = excalidrawAPIRef.current;
+      
+      if (api && typeof api.updateScene === 'function') {
         try {
           console.log('Excalidraw API available, updating scene');
-          const currentElements = excalidrawAPIRef.current.getSceneElements() || [];
-          const newElements = [...currentElements, ...elements];
-          excalidrawAPIRef.current.updateScene({
-            elements: newElements,
-          });
-          // Auto-fit content to view
-          if (excalidrawAPIRef.current.scrollToContent) {
-            excalidrawAPIRef.current.scrollToContent(newElements);
+          const currentElements = api.getSceneElements?.() || [];
+          
+          const normalizedNewElements = (Array.isArray(elements) ? elements : [])
+            .filter((el) => el && typeof el === 'object')
+            .map((el) => normalizeElement(el));
+          
+          if (!Array.isArray(normalizedNewElements) || normalizedNewElements.length === 0) {
+            console.warn('No valid elements after normalization');
+            return;
           }
+
+          const newElements = [...(Array.isArray(currentElements) ? currentElements : []), ...normalizedNewElements];
+          
+          // Update Excalidraw canvas
+          api.updateScene({
+            elements: newElements,
+            appState: {
+              selectedElementIds: {},
+              selectedGroupIds: {},
+            },
+            commitToHistory: true,
+          });
+          
+          // ── CRITICAL FIX ──
+          // Excalidraw's programmatic updateScene does NOT reliably trigger onChange.
+          // We MUST save directly here — do NOT rely on handleCanvasChange for AI-generated diagrams.
+          saveElementsNow(boardId, newElements);
+          
+          // Auto-fit content to view
+          if (api.scrollToContent && newElements.length > 0) {
+            try {
+              api.scrollToContent(normalizedNewElements, { animate: true });
+            } catch (scrollErr) {
+              console.warn('Could not auto-scroll:', scrollErr);
+            }
+          }
+          console.log('Scene updated and saved with', normalizedNewElements.length, 'new elements');
         } catch (err) {
           console.error('Failed to update scene:', err);
+          if (retries < 5) {
+            console.warn(`Retrying after error... (${retries + 1}/5)`);
+            setTimeout(() => attemptUpdate(retries + 1), 100);
+          }
         }
+      } else if (retries < 15) {
+        console.warn(`Excalidraw API not ready, retrying... (${retries + 1}/15)`);
+        setTimeout(() => attemptUpdate(retries + 1), 100);
       } else {
-        console.error('Excalidraw API not initialized yet');
+        console.error('Excalidraw API failed to initialize after 15 retries');
       }
-    }, 50);
+    };
+    
+    attemptUpdate();
   };
+
 
   const handleExport = () => {
     if (excalidrawAPIRef.current) {
@@ -297,12 +474,22 @@ export default function WhiteboardPage() {
 
             {/* Canvas — fills remaining height */}
             <div className="flex-1 overflow-hidden">
+              {/*
+                key={activeBoard?.id} is the CRITICAL fix for board isolation.
+                It must be on ExcalidrawWrapper (not on ExcalidrawWithCSS inside it)
+                so that the entire component — including useState — resets first.
+                The useEffect that reads board.data then runs on a fresh component
+                and sets initialData BEFORE ExcalidrawWithCSS ever mounts.
+                Putting the key inside (on ExcalidrawWithCSS) causes a race condition
+                where Excalidraw mounts with stale initialData from the previous board.
+              */}
               <ExcalidrawWrapper
+                key={activeBoard?.id}
                 board={activeBoard}
                 onChange={handleCanvasChange}
                 refCallback={(api) => { 
-                  console.log('Excalidraw API received:', api);
-                  excalidrawAPIRef.current = api; 
+                  excalidrawAPIRef.current = api;
+                  setApiReady(!!api);
                 }}
               />
             </div>

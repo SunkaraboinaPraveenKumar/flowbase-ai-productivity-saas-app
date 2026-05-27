@@ -101,6 +101,17 @@ export async function DELETE(req: Request) {
 
     await db.delete(whiteboards).where(and(eq(whiteboards.id, id), eq(whiteboards.userId, user.id)));
 
+    try {
+      await db.insert(activityLog).values({
+        userId: user.id,
+        action: 'Deleted Whiteboard',
+        entityType: 'whiteboard',
+        entityId: id,
+      });
+    } catch (logErr) {
+      console.error('Whiteboard DELETE activityLog error:', logErr);
+    }
+
     return NextResponse.json({ success: true });
   } catch (error) {
     console.error('Whiteboard DELETE error:', error);

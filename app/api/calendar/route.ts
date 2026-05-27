@@ -87,6 +87,17 @@ export async function PUT(req: Request) {
       updatedAt: new Date(),
     }).where(and(eq(calendarTasks.id, id), eq(calendarTasks.userId, user.id))).returning();
 
+    try {
+      await db.insert(activityLog).values({
+        userId: user.id,
+        action: 'Updated Task',
+        entityType: 'task',
+        entityId: id,
+      });
+    } catch (logErr) {
+      console.error('Calendar PUT activityLog error:', logErr);
+    }
+
     return NextResponse.json({ success: true, task: updated[0] });
   } catch (error) {
     console.error('Calendar PUT error:', error);
@@ -108,6 +119,17 @@ export async function DELETE(req: Request) {
     if (!id) return NextResponse.json({ error: 'ID required' }, { status: 400 });
 
     await db.delete(calendarTasks).where(and(eq(calendarTasks.id, id), eq(calendarTasks.userId, user.id)));
+
+    try {
+      await db.insert(activityLog).values({
+        userId: user.id,
+        action: 'Deleted Task',
+        entityType: 'task',
+        entityId: id,
+      });
+    } catch (logErr) {
+      console.error('Calendar DELETE activityLog error:', logErr);
+    }
 
     return NextResponse.json({ success: true });
   } catch (error) {

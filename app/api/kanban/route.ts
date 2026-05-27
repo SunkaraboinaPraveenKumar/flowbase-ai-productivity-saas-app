@@ -118,6 +118,19 @@ export async function POST(req: Request) {
         dueDate: dueDate ? new Date(dueDate) : null,
         order: order || 0,
       }).returning();
+
+      try {
+        await db.insert(activityLog).values({
+          userId: user.id,
+          action: 'Created Task',
+          entityType: 'task',
+          entityId: insertedTask[0].id,
+          metadata: JSON.stringify({ title, priority }),
+        });
+      } catch (logErr) {
+        console.error('Kanban POST task activityLog error:', logErr);
+      }
+
       return NextResponse.json({ success: true, task: insertedTask[0] });
     }
 
@@ -151,6 +164,18 @@ export async function PUT(req: Request) {
         order,
         updatedAt: new Date(),
       }).where(and(eq(kanbanTasks.id, id), eq(kanbanTasks.userId, user.id))).returning();
+
+      try {
+        await db.insert(activityLog).values({
+          userId: user.id,
+          action: 'Updated Task',
+          entityType: 'task',
+          entityId: id,
+        });
+      } catch (logErr) {
+        console.error('Kanban PUT task activityLog error:', logErr);
+      }
+
       return NextResponse.json({ success: true, task: updated[0] });
     }
 

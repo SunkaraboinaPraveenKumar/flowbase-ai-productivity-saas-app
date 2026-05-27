@@ -48,13 +48,14 @@ export default function AIDiagramPrompt({ onGenerate }: AIDiagramPromptProps) {
   };
 
   const useFallback = () => {
+    const ts = Date.now();
     setTimeout(() => {
       const mockElements = [
-        { id: `el-${Date.now()}-1`, type: 'rectangle', x: 100, y: 100, width: 160, height: 64, strokeColor: '#7c3aed', backgroundColor: 'rgba(124,58,237,0.12)', fillStyle: 'solid', roughness: 1, strokeWidth: 2 },
-        { id: `el-${Date.now()}-2`, type: 'text', x: 138, y: 122, text: 'Start', fontSize: 16, strokeColor: '#f0f0f5' },
-        { id: `el-${Date.now()}-3`, type: 'arrow', x: 260, y: 132, width: 80, height: 0, points: [[0, 0], [80, 0]], strokeColor: '#06b6d4', strokeWidth: 2 },
-        { id: `el-${Date.now()}-4`, type: 'rectangle', x: 340, y: 100, width: 160, height: 64, strokeColor: '#10b981', backgroundColor: 'rgba(16,185,129,0.12)', fillStyle: 'solid', roughness: 1, strokeWidth: 2 },
-        { id: `el-${Date.now()}-5`, type: 'text', x: 378, y: 122, text: 'Process', fontSize: 16, strokeColor: '#f0f0f5' },
+        { id: `el-${ts}-1`, type: 'rectangle', x: 100, y: 100, width: 160, height: 64, strokeColor: '#1e3a8a', backgroundColor: 'rgba(30,58,138,0.10)', fillStyle: 'solid', roughness: 1, strokeWidth: 2, groupIds: [], boundElements: null, isDeleted: false, version: 1, versionNonce: 1, updated: ts, link: null, locked: false, frameId: null, roundness: null },
+        { id: `el-${ts}-2`, type: 'text', x: 138, y: 122, width: 80, height: 20, text: 'Start', fontSize: 16, fontFamily: 1, textAlign: 'left', verticalAlign: 'top', containerId: null, originalText: 'Start', lineHeight: 1.25, autoResize: true, strokeColor: '#1a1a2e', backgroundColor: 'transparent', fillStyle: 'solid', roughness: 1, strokeWidth: 1, opacity: 100, groupIds: [], boundElements: null, isDeleted: false, version: 1, versionNonce: 2, updated: ts, link: null, locked: false, frameId: null, roundness: null },
+        { id: `el-${ts}-3`, type: 'arrow', x: 260, y: 132, width: 80, height: 0, points: [[0, 0], [80, 0]], strokeColor: '#15803d', strokeWidth: 2, fillStyle: 'solid', roughness: 1, opacity: 100, backgroundColor: 'transparent', startArrowhead: null, endArrowhead: 'arrow', startBinding: null, endBinding: null, lastCommittedPoint: null, elbowed: false, groupIds: [], boundElements: null, isDeleted: false, version: 1, versionNonce: 3, updated: ts, link: null, locked: false, frameId: null, roundness: null },
+        { id: `el-${ts}-4`, type: 'rectangle', x: 340, y: 100, width: 160, height: 64, strokeColor: '#15803d', backgroundColor: 'rgba(21,128,61,0.10)', fillStyle: 'solid', roughness: 1, strokeWidth: 2, groupIds: [], boundElements: null, isDeleted: false, version: 1, versionNonce: 4, updated: ts, link: null, locked: false, frameId: null, roundness: null },
+        { id: `el-${ts}-5`, type: 'text', x: 378, y: 122, width: 84, height: 20, text: 'Process', fontSize: 16, fontFamily: 1, textAlign: 'left', verticalAlign: 'top', containerId: null, originalText: 'Process', lineHeight: 1.25, autoResize: true, strokeColor: '#1a1a2e', backgroundColor: 'transparent', fillStyle: 'solid', roughness: 1, strokeWidth: 1, opacity: 100, groupIds: [], boundElements: null, isDeleted: false, version: 1, versionNonce: 5, updated: ts, link: null, locked: false, frameId: null, roundness: null },
       ];
       console.log('Using AI diagram fallback elements');
       onGenerate(mockElements);

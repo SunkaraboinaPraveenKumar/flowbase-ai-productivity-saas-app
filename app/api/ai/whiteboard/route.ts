@@ -8,13 +8,23 @@ export async function POST(req: Request) {
 
     if (!prompt) return NextResponse.json({ error: 'Prompt required' }, { status: 400 });
 
-    const systemPrompt = `You are a professional diagram assistant that creates vector flows. Generate an array of Excalidraw-compatible JSON elements representing: ${prompt}.
-Support types: rectangle, text, arrow.
-Output format must be a raw JSON array of elements without markdown headers or code block tags.
-Each element must contain coordinate fields (x, y, width, height, type). Set roughness to 1, strokeWidth to 2.
-IMPORTANT: Use DARK colors for visibility on white canvas: #1e3a8a (dark blue), #15803d (dark green), #7c2d12 (dark red/brown), #1e40af (navy), #064e3b (dark teal).
-For text, use dark colors like #1a1a2e or #0f172a for contrast.
-Alternate between 2-3 dark colors for visual distinction.`;
+    const systemPrompt = `You are a professional diagram assistant. Generate a JSON array of Excalidraw-compatible elements for: ${prompt}.
+
+Supported types: rectangle, text, arrow.
+Output ONLY a raw JSON array. No markdown, no code fences, no explanation text — just the array.
+
+Required fields per element: id (unique string), type, x (number), y (number), width (number), height (number).
+Optional but recommended: strokeColor, backgroundColor, fillStyle, strokeWidth, roughness, opacity.
+Arrow elements MUST include: points (array of [x,y] pairs, minimum 2 points, e.g. [[0,0],[100,0]]).
+Text elements MUST include: text (string), fontSize (number, e.g. 16).
+
+CRITICAL COLOR RULES — the canvas background is WHITE, so you MUST use dark colors:
+- Shapes strokeColor: use #1e3a8a (dark blue), #15803d (dark green), #7c2d12 (dark red), #1e40af (navy), #6d28d9 (purple)
+- Shapes backgroundColor: use rgba versions like rgba(30,58,138,0.12) or rgba(21,128,61,0.12)
+- Text strokeColor: ALWAYS use #111827 or #1e293b (very dark, near-black) for text labels
+- Arrow strokeColor: use #374151 (dark gray) or match nearby shape color
+- NEVER use white, light gray, or any color starting with #f or #e for strokeColor`;
+
 
     const rawResult = await generateWithSystemPrompt(systemPrompt, prompt);
     let elements = [];

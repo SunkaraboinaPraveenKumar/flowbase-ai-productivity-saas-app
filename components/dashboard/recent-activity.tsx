@@ -33,7 +33,9 @@ export default function RecentActivity({ activities = [] }: { activities?: Activ
             No recent activity logged yet.
           </div>
         ) : (
-          activities.slice(0, 10).map((act) => (
+          [...activities]
+            .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+            .map((act) => (
             <div key={act.id} className="flex gap-3 items-start text-xs border-b border-border/30 pb-3 last:border-0 last:pb-0">
               <div className="p-1.5 bg-bg-secondary border border-border rounded-lg mt-0.5">
                 {getActionIcon(act.action)}

@@ -1,10 +1,11 @@
 'use client';
 
 import { usePathname } from 'next/navigation';
-import { Search, Bell, Menu } from 'lucide-react';
+import { Search, Menu } from 'lucide-react';
 import { UserButton, useUser } from '@clerk/nextjs';
 import { useState } from 'react';
 import CommandPalette from './command-palette';
+import NotificationPanel from './notification-panel';
 
 export default function Topbar({ 
   onToggleSidebar 
@@ -58,10 +59,7 @@ export default function Topbar({
           </button>
 
           {/* Notifications Bell */}
-          <button className="p-2 rounded-lg border border-border text-text-secondary hover:text-text-primary hover:bg-bg-card transition-all relative">
-            <Bell className="w-5 h-5" />
-            <span className="absolute top-1 right-1 w-2.5 h-2.5 bg-accent-primary rounded-full ring-2 ring-bg-secondary animate-pulse" />
-          </button>
+          <NotificationPanel />
 
           {/* Auth Section */}
           {isLoaded && isSignedIn && user ? (

@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 import { auth } from '@clerk/nextjs/server';
 import { db } from '@/db';
 import { users, calendarTasks, kanbanBoards, notes, spaces, activityLog } from '@/db/schema';
-import { eq, gte, and } from 'drizzle-orm';
+import { eq, gte, and, desc } from 'drizzle-orm';
 
 export async function GET() {
   try {
@@ -44,11 +44,12 @@ export async function GET() {
       )
       .limit(10);
 
-    // Recent activity log
+    // Recent activity log — latest first
     const activities = await db
       .select()
       .from(activityLog)
       .where(eq(activityLog.userId, dbUser.id))
+      .orderBy(desc(activityLog.createdAt))
       .limit(10);
 
     return NextResponse.json({

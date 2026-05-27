@@ -1,6 +1,7 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useUser } from '@clerk/nextjs';
 import { 
   User, 
   CreditCard, 
@@ -20,7 +21,10 @@ import {
 } from '@/components/ui/select';
 
 export default function SettingsPage() {
+  const { user, isLoaded } = useUser();
   const [activeTab, setActiveTab] = useState<'profile' | 'billing' | 'categories' | 'ai'>('profile');
+  const [fullName, setFullName] = useState('');
+  const [email, setEmail] = useState('');
   
   // Custom Category States
   const [categories, setCategories] = useState([
@@ -36,6 +40,14 @@ export default function SettingsPage() {
   const [aiModel, setAiModel] = useState('gemini-2.5-flash');
   const [aiTone, setAiTone] = useState('concise');
   const [enableRefine, setEnableRefine] = useState(true);
+
+  // Load user data from Clerk
+  useEffect(() => {
+    if (isLoaded && user) {
+      setFullName(user.fullName || '');
+      setEmail(user.primaryEmailAddress?.emailAddress || '');
+    }
+  }, [isLoaded, user]);
 
   const handleAddCategory = (e: React.FormEvent) => {
     e.preventDefault();
@@ -93,24 +105,29 @@ export default function SettingsPage() {
             
             <div className="space-y-4 max-w-sm">
               <div className="space-y-1">
-                <label className="text-[10px] font-bold text-text-muted uppercase">Full Name</label>
+                <label className="text-[10px] font-bold text-text-muted uppercase block">Full Name</label>
                 <input
                   type="text"
                   placeholder="John Doe"
                   className="w-full input-base text-xs py-1.5 px-3"
-                  defaultValue="FlowBase Guest User"
+                  value={fullName}
+                  onChange={(e) => setFullName(e.target.value)}
+                  disabled={!isLoaded}
                 />
               </div>
               <div className="space-y-1">
-                <label className="text-[10px] font-bold text-text-muted uppercase">Email Address</label>
+                <label className="text-[10px] font-bold text-text-muted uppercase block">Email Address</label>
                 <input
                   type="email"
                   className="w-full input-base text-xs py-1.5 px-3 bg-bg-secondary/50 text-text-muted cursor-not-allowed"
-                  defaultValue="guest@flowbase.ai"
+                  value={email}
                   disabled
                 />
               </div>
-              <button className="button-primary text-xs py-2 px-5 shadow-glow">
+              <button 
+                className="button-primary text-xs py-2 px-5 shadow-glow disabled:opacity-50"
+                disabled={!isLoaded}
+              >
                 Save Changes
               </button>
             </div>
@@ -193,8 +210,8 @@ export default function SettingsPage() {
             
             {/* Quick category add form */}
             <form onSubmit={handleAddCategory} className="flex gap-4 items-end flex-wrap bg-bg-secondary/40 p-4 border border-border rounded-xl">
-              <div className="space-y-1 text-xs">
-                <label className="text-[10px] font-bold text-text-muted uppercase">Name</label>
+              <div className="space-y-2 text-xs">
+                <label className="text-[10px] font-bold text-text-muted uppercase block">Name</label>
                 <input
                   type="text"
                   placeholder="e.g. Design"
@@ -205,7 +222,7 @@ export default function SettingsPage() {
                 />
               </div>
 
-              <div className="space-y-1 text-xs">
+              <div className="space-y-2 text-xs">
                 <label className="text-[10px] font-bold text-text-muted uppercase block">Color</label>
                 <input
                   type="color"
@@ -215,8 +232,8 @@ export default function SettingsPage() {
                 />
               </div>
 
-              <div className="space-y-1 text-xs">
-                <label className="text-[10px] font-bold text-text-muted uppercase">Scope</label>
+              <div className="space-y-2 text-xs">
+                <label className="text-[10px] font-bold text-text-muted uppercase block">Scope</label>
                 <Select value={catScope} onValueChange={setCatScope}>
                   <SelectTrigger className="h-8">
                     <SelectValue />

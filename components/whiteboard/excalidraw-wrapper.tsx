@@ -14,7 +14,7 @@ const ExcalidrawWithCSS = dynamic(
   {
     ssr: false,
     loading: () => (
-      <div className="w-full h-full flex items-center justify-center bg-[#0a0a0f]">
+      <div className="w-full h-full flex items-center justify-center">
         <div className="flex flex-col items-center gap-3">
           <RefreshCw className="w-5 h-5 animate-spin text-accent-primary/60" />
           <span className="text-xs text-text-muted">Loading canvas...</span>
@@ -33,32 +33,44 @@ interface ExcalidrawWrapperProps {
 export default function ExcalidrawWrapper({ board, onChange, refCallback }: ExcalidrawWrapperProps) {
   const [initialData, setInitialData] = useState<any>(null);
 
+  // Single effect — runs when this component mounts (key on parent means a fresh mount per board).
+  // Parses board.data and sets initialData so ExcalidrawWithCSS only mounts with the correct elements.
   useEffect(() => {
-    if (board) {
-      try {
-        const parsed = board.data ? JSON.parse(board.data) : [];
-        const elements = Array.isArray(parsed) ? parsed : [];
-        setInitialData({
-          elements: elements,
-          appState: {
-            viewBackgroundColor: '#0a0a0f',
-            theme: 'dark',
-            gridSize: null,
-          },
-          scrollToContent: elements.length > 0,
-        });
-      } catch {
-        setInitialData({
-          elements: [],
-          appState: { viewBackgroundColor: '#0a0a0f', theme: 'dark' },
-        });
-      }
-    }
-  }, [board?.id]);
+    if (!board) return;
 
+    try {
+      const parsed = board.data ? JSON.parse(board.data) : [];
+      const elements = Array.isArray(parsed) ? parsed : [];
+      setInitialData({
+        elements,
+        appState: {
+          viewBackgroundColor: '#ffffff',
+          gridSize: null,
+          selectedElementIds: {},
+          selectedGroupIds: {},
+        },
+      });
+    } catch (err) {
+      console.error('[ExcalidrawWrapper] Error parsing board data:', err);
+      setInitialData({
+        elements: [],
+        appState: {
+          viewBackgroundColor: '#ffffff',
+          selectedElementIds: {},
+          selectedGroupIds: {},
+        },
+      });
+    }
+  // board?.id intentionally not used here — this component is remounted fresh per board
+  // via key={activeBoard?.id} on the parent in page.tsx, so we only ever need to run once.
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // Don't render Excalidraw until initialData is ready — it treats initialData as mount-only.
+  // If we render before the effect sets data, Excalidraw would mount with an empty canvas.
   if (!initialData) {
     return (
-      <div className="w-full h-full flex items-center justify-center bg-[#0a0a0f]">
+      <div className="w-full h-full flex items-center justify-center">
         <div className="flex flex-col items-center gap-3">
           <RefreshCw className="w-5 h-5 animate-spin text-accent-primary/60" />
           <span className="text-xs text-text-muted">Loading canvas...</span>
@@ -70,10 +82,16 @@ export default function ExcalidrawWrapper({ board, onChange, refCallback }: Exca
   return (
     <div className="w-full h-full">
       <ExcalidrawWithCSS
-        excalidrawAPI={refCallback}
+        excalidrawAPI={(api) => {
+          refCallback(api);
+        }}
         initialData={initialData}
-        onChange={(elements) => onChange(elements && elements.length > 0 ? elements : [])}
-        theme="dark"
+        onChange={(elements, _appState, _files) => {
+          // Excalidraw can pass undefined elements on first render — guard against it
+          if (!elements) return;
+          const safeElements = Array.isArray(elements) ? elements : [];
+          onChange(safeElements);
+        }}
         UIOptions={{
           canvasActions: {
             changeViewBackgroundColor: false,
