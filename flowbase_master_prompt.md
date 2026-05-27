@@ -386,7 +386,7 @@ CLERK_PRO_PLAN_ID=
 
 # AI
 GEMINI_API_KEY=
-GEMINI_MODEL=gemini-1.5-pro
+GEMINI_MODEL=gemini-3-flash-preview
 
 # AssemblyAI
 ASSEMBLYAI_API_KEY=

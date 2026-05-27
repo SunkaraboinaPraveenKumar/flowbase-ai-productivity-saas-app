@@ -3,7 +3,13 @@
 import { useState, useEffect } from 'react';
 import { X, Calendar as CalendarIcon, Send } from 'lucide-react';
 import { format } from 'date-fns';
-import ModernSelect from '@/components/ui/modern-select';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 
 interface TaskDialogProps {
   isOpen: boolean;
@@ -83,10 +89,10 @@ export default function TaskDialog({ isOpen, onClose, onSave, onDelete, task, co
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
-      <div className="w-full max-w-2xl bg-bg-card border border-border rounded-xl shadow-2xl overflow-hidden glass-effect animate-in fade-in zoom-in-95 duration-150 grid grid-cols-1 md:grid-cols-5 h-[80vh] md:h-auto md:max-h-[85vh]">
+      <div className="w-full max-w-2xl bg-bg-card border border-border rounded-xl shadow-2xl glass-effect animate-in fade-in zoom-in-95 duration-150 grid grid-cols-1 md:grid-cols-5 h-[80vh] md:h-auto md:max-h-[85vh]">
         
         {/* Form Details Area */}
-        <form onSubmit={handleSubmit} className="md:col-span-3 p-5 border-r border-border flex flex-col gap-4 overflow-y-auto">
+        <form onSubmit={handleSubmit} className="md:col-span-3 p-5 border-r border-border flex flex-col gap-4 overflow-x-hidden overflow-y-auto relative">
           <div className="flex justify-between items-center pb-2 border-b border-border">
             <h3 className="font-bold text-text-primary">
               {task ? 'Edit Card details' : 'New Board Card'}
@@ -119,30 +125,34 @@ export default function TaskDialog({ isOpen, onClose, onSave, onDelete, task, co
           </div>
 
           <div className="grid grid-cols-2 gap-3">
-            <ModernSelect
-              label="Priority"
-              value={priority}
-              onChange={setPriority}
-              options={['low', 'medium', 'high', 'urgent']}
-            />
             <div className="space-y-1">
-              <label className="text-[10px] font-bold text-text-muted uppercase block">Column</label>
-              <div className="relative">
-                <select
-                  value={columnId}
-                  onChange={(e) => setColumnId(e.target.value)}
-                  className="w-full px-3 py-2 rounded-lg border border-border bg-bg-secondary text-text-primary text-xs font-medium appearance-none cursor-pointer hover:border-accent-primary/50 hover:bg-bg-card transition-all"
-                >
+              <label className="text-[10px] font-bold text-text-muted uppercase">Priority</label>
+              <Select value={priority} onValueChange={setPriority}>
+                <SelectTrigger className="h-8">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="low">Low</SelectItem>
+                  <SelectItem value="medium">Medium</SelectItem>
+                  <SelectItem value="high">High</SelectItem>
+                  <SelectItem value="urgent">Urgent</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="space-y-1">
+              <label className="text-[10px] font-bold text-text-muted uppercase">Column</label>
+              <Select value={columnId} onValueChange={setColumnId}>
+                <SelectTrigger className="h-8">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
                   {columns.map((col) => (
-                    <option key={col.id} value={col.id}>{col.name}</option>
+                    <SelectItem key={col.id} value={col.id}>
+                      {col.name}
+                    </SelectItem>
                   ))}
-                </select>
-                <div className="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2 text-text-muted">
-                  <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
-                  </svg>
-                </div>
-              </div>
+                </SelectContent>
+              </Select>
             </div>
           </div>
 
@@ -170,7 +180,7 @@ export default function TaskDialog({ isOpen, onClose, onSave, onDelete, task, co
             </div>
           </div>
 
-          <div className="flex items-center justify-between border-t border-border pt-4 mt-2">
+          <div className="flex items-center justify-between border-t border-border pt-4 mt-2 pb-2">
             {task && onDelete ? (
               <button
                 type="button"

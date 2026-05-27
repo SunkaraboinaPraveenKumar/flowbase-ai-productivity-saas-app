@@ -1,8 +1,8 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import NotesSidebar from '@/components/notes/notes-sidebar';
-import RichEditor from '@/components/notes/rich-editor';
+import RichEditor, { RichEditorHandle } from '@/components/notes/rich-editor';
 import AIRefineToolbar from '@/components/notes/ai-toolbar';
 import { FileText } from 'lucide-react';
 
@@ -10,6 +10,7 @@ export default function NotesPage() {
   const [notes, setNotes] = useState<any[]>([]);
   const [activeNoteId, setActiveNoteId] = useState<string | null>(null);
   const [selectedText, setSelectedText] = useState('');
+  const editorRef = useRef<RichEditorHandle>(null);
 
   const fetchNotes = async () => {
     try {
@@ -117,6 +118,7 @@ export default function NotesPage() {
           <>
             <div className="md:col-span-2">
               <RichEditor
+                ref={editorRef}
                 note={activeNote}
                 onSave={(fields) => handleUpdateNote({ id: activeNote.id, ...fields })}
                 onSelectionChange={setSelectedText}
@@ -126,14 +128,9 @@ export default function NotesPage() {
               <AIRefineToolbar
                 selectedText={selectedText}
                 onRefined={(newText) => {
-                  // Direct note updates on refined results
-                  handleUpdateNote({
-                    id: activeNote.id,
-                    content: JSON.stringify({
-                      type: 'doc',
-                      content: [{ type: 'paragraph', content: [{ type: 'text', text: newText }] }]
-                    })
-                  });
+                  // Directly update the Tiptap editor — no DB round-trip needed.
+                  // The editor's own onUpdate debounce will persist the change.
+                  editorRef.current?.replaceSelectedText(selectedText, newText);
                 }}
               />
             </div>

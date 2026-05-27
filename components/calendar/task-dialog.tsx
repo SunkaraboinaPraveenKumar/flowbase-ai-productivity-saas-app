@@ -3,7 +3,13 @@
 import { useState, useEffect } from 'react';
 import { X, Calendar as CalendarIcon, Clock } from 'lucide-react';
 import { format } from 'date-fns';
-import ModernSelect from '@/components/ui/modern-select';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 
 interface TaskDialogProps {
   isOpen: boolean;
@@ -145,18 +151,36 @@ export default function TaskDialog({ isOpen, onClose, onSave, onDelete, task, de
           </div>
 
           <div className="grid grid-cols-2 gap-3">
-            <ModernSelect
-              label="Type"
-              value={taskType}
-              onChange={setTaskType}
-              options={TYPES}
-            />
-            <ModernSelect
-              label="Category"
-              value={category}
-              onChange={setCategory}
-              options={CATEGORIES}
-            />
+            <div className="space-y-1">
+              <label className="text-[10px] font-bold text-text-muted uppercase">Type</label>
+              <Select value={taskType} onValueChange={setTaskType}>
+                <SelectTrigger className="h-8">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {TYPES.map((type) => (
+                    <SelectItem key={type} value={type}>
+                      {type.charAt(0).toUpperCase() + type.slice(1)}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="space-y-1">
+              <label className="text-[10px] font-bold text-text-muted uppercase">Category</label>
+              <Select value={category} onValueChange={setCategory}>
+                <SelectTrigger className="h-8">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {CATEGORIES.map((cat) => (
+                    <SelectItem key={cat} value={cat}>
+                      {cat.charAt(0).toUpperCase() + cat.slice(1)}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
           </div>
 
           {/* Color Selection */}

@@ -1,25 +1,33 @@
 import { NextResponse } from 'next/server';
-import axios from 'axios';
 
 export async function GET() {
   try {
     const apiKey = process.env.ASSEMBLYAI_API_KEY;
     if (!apiKey) {
-      // Return a flag indicating that simulation mode should run
       return NextResponse.json({ mock: true }, { status: 200 });
     }
 
-    // Call AssemblyAI token endpoint
-    const response = await axios.post(
-      'https://api.assemblyai.com/v2/realtime/token',
-      { expires_in: 3600 },
-      { headers: { Authorization: apiKey } }
+    // AssemblyAI v3 streaming token endpoint — GET request with query param
+    const response = await fetch(
+      'https://streaming.assemblyai.com/v3/token?expires_in_seconds=300',
+      {
+        method: 'GET',
+        headers: {
+          Authorization: apiKey,
+        },
+      }
     );
 
-    return NextResponse.json({ token: response.data.token, mock: false });
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error('AssemblyAI token error:', response.status, errorText);
+      return NextResponse.json({ mock: true });
+    }
+
+    const data = await response.json();
+    return NextResponse.json({ token: data.token, mock: false });
   } catch (error: any) {
     console.error('AssemblyAI token fetch error:', error.message || error);
-    // Fall back to mock
     return NextResponse.json({ mock: true });
   }
 }

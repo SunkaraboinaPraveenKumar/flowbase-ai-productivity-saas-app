@@ -10,10 +10,12 @@ interface AIRefineToolbarProps {
 
 export default function AIRefineToolbar({ selectedText, onRefined }: AIRefineToolbarProps) {
   const [loading, setLoading] = useState(false);
+  const [lastAction, setLastAction] = useState<string | null>(null);
 
   const handleRefine = async (action: string) => {
     if (!selectedText.trim()) return;
     setLoading(true);
+    setLastAction(action);
 
     try {
       const res = await fetch('/api/ai/refine', {
@@ -41,15 +43,16 @@ export default function AIRefineToolbar({ selectedText, onRefined }: AIRefineToo
       }, 1000);
     } finally {
       setLoading(false);
+      setLastAction(null);
     }
   };
 
   const actions = [
-    { label: 'Improve Grammar', value: 'grammar' },
-    { label: 'Make Shorter', value: 'shorter' },
-    { label: 'Make Longer', value: 'longer' },
-    { label: 'Simplify Language', value: 'simplify' },
-    { label: 'Professional Tone', value: 'professional' },
+    { label: 'Fix Grammar', value: 'grammar', icon: '✦', hoverClass: 'hover:border-accent-secondary hover:text-accent-secondary hover:bg-accent-secondary/5' },
+    { label: 'Make Shorter', value: 'shorter', icon: '⬡', hoverClass: 'hover:border-accent-amber hover:text-accent-amber hover:bg-accent-amber/5' },
+    { label: 'Make Longer', value: 'longer', icon: '◈', hoverClass: 'hover:border-accent-green hover:text-accent-green hover:bg-accent-green/5' },
+    { label: 'Simplify', value: 'simplify', icon: '◉', hoverClass: 'hover:border-accent-primary hover:text-accent-primary hover:bg-accent-primary/5' },
+    { label: 'Professional Tone', value: 'professional', icon: '✴', hoverClass: 'hover:border-accent-rose hover:text-accent-rose hover:bg-accent-rose/5' },
   ];
 
   return (
@@ -65,34 +68,33 @@ export default function AIRefineToolbar({ selectedText, onRefined }: AIRefineToo
 
       {selectedText ? (
         <div className="space-y-3">
-          <div className="p-2.5 rounded bg-bg-secondary border border-border text-[10px] text-text-muted italic max-h-[80px] overflow-y-auto">
-            "{selectedText}"
+          {/* Selected text preview */}
+          <div className="p-2.5 rounded-lg bg-bg-secondary border border-border text-[10px] text-text-muted italic max-h-[72px] overflow-y-auto leading-relaxed">
+            &ldquo;{selectedText}&rdquo;
           </div>
-          
-          <div className="flex gap-1.5 flex-wrap">
+
+          <div className="grid grid-cols-1 gap-1.5">
             {actions.map((act) => (
               <button
                 key={act.value}
                 type="button"
                 disabled={loading}
                 onClick={() => handleRefine(act.value)}
-                className="text-[10px] px-2.5 py-1.5 rounded-lg border border-border bg-bg-card hover:bg-bg-elevated hover:text-accent-primary disabled:opacity-50 text-text-secondary font-medium transition-all"
+                className={`flex items-center gap-2 text-[10px] px-2.5 py-2 rounded-lg border border-border bg-bg-card ${act.hoverClass} disabled:opacity-40 text-text-secondary font-semibold transition-all duration-150`}
               >
+                {loading && lastAction === act.value
+                  ? <RefreshCw className="w-3 h-3 animate-spin flex-shrink-0" />
+                  : <span className="text-[11px] flex-shrink-0">{act.icon}</span>
+                }
                 {act.label}
               </button>
             ))}
           </div>
         </div>
       ) : (
-        <div className="py-4 border border-dashed border-border/20 rounded-xl text-center text-[10px] text-text-muted select-none italic">
+        <div className="py-5 border border-dashed border-border/30 rounded-xl text-center text-[10px] text-text-muted select-none italic space-y-1.5">
+          <Sparkles className="w-5 h-5 mx-auto text-text-muted/40 mb-1.5" />
           Highlight document text to unlock refiner controls
-        </div>
-      )}
-
-      {loading && (
-        <div className="flex items-center gap-2 text-[10px] text-accent-primary animate-pulse justify-center font-bold">
-          <RefreshCw className="w-3.5 h-3.5 animate-spin" />
-          <span>Refining selections...</span>
         </div>
       )}
     </div>

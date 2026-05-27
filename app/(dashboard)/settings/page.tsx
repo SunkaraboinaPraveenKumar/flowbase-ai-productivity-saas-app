@@ -11,6 +11,13 @@ import {
   Sparkles
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 
 export default function SettingsPage() {
   const [activeTab, setActiveTab] = useState<'profile' | 'billing' | 'categories' | 'ai'>('profile');
@@ -26,7 +33,7 @@ export default function SettingsPage() {
   const [catScope, setCatScope] = useState('calendar');
 
   // AI settings state
-  const [aiModel, setAiModel] = useState('gemini-1.5-pro');
+  const [aiModel, setAiModel] = useState('gemini-2.5-flash');
   const [aiTone, setAiTone] = useState('concise');
   const [enableRefine, setEnableRefine] = useState(true);
 
@@ -210,15 +217,16 @@ export default function SettingsPage() {
 
               <div className="space-y-1 text-xs">
                 <label className="text-[10px] font-bold text-text-muted uppercase">Scope</label>
-                <select
-                  value={catScope}
-                  onChange={(e) => setCatScope(e.target.value)}
-                  className="input-base text-xs py-1.5 px-3 bg-bg-primary"
-                >
-                  <option value="calendar">Calendar</option>
-                  <option value="kanban">Kanban</option>
-                  <option value="notes">Notes</option>
-                </select>
+                <Select value={catScope} onValueChange={setCatScope}>
+                  <SelectTrigger className="h-8">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="calendar">Calendar</SelectItem>
+                    <SelectItem value="kanban">Kanban</SelectItem>
+                    <SelectItem value="notes">Notes</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
 
               <button
@@ -260,28 +268,30 @@ export default function SettingsPage() {
             <div className="space-y-4 max-w-sm">
               <div className="space-y-1">
                 <label className="text-[10px] font-bold text-text-muted uppercase">Default Model</label>
-                <select
-                  value={aiModel}
-                  onChange={(e) => setAiModel(e.target.value)}
-                  className="w-full input-base text-xs py-2"
-                >
-                  <option value="gemini-1.5-pro">Gemini 1.5 Pro</option>
-                  <option value="gemini-1.5-flash">Gemini 1.5 Flash</option>
-                </select>
+                <Select value={aiModel} onValueChange={setAiModel}>
+                  <SelectTrigger className="h-8">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="gemini-2.5-flash">Gemini 2.5 Flash</SelectItem>
+                    <SelectItem value="gemini-3-flash-preview">Gemini 3 Flash Preview</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
 
               <div className="space-y-1">
                 <label className="text-[10px] font-bold text-text-muted uppercase">AI Writing Tone</label>
-                <select
-                  value={aiTone}
-                  onChange={(e) => setAiTone(e.target.value)}
-                  className="w-full input-base text-xs py-2"
-                >
-                  <option value="concise">Concise & Direct</option>
-                  <option value="friendly">Friendly & Warm</option>
-                  <option value="professional">Formal & Professional</option>
-                  <option value="creative">Creative & Verbose</option>
-                </select>
+                <Select value={aiTone} onValueChange={setAiTone}>
+                  <SelectTrigger className="h-8">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="concise">Concise & Direct</SelectItem>
+                    <SelectItem value="friendly">Friendly & Warm</SelectItem>
+                    <SelectItem value="professional">Formal & Professional</SelectItem>
+                    <SelectItem value="creative">Creative & Verbose</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
 
               <div className="flex items-center justify-between border-t border-border pt-4">

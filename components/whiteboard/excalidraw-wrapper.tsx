@@ -2,13 +2,26 @@
 
 import { useState, useEffect } from 'react';
 import dynamic from 'next/dynamic';
+import { RefreshCw } from 'lucide-react';
+import '@excalidraw/excalidraw/index.css';
 
-const Excalidraw = dynamic(
+// Excalidraw component with no SSR
+const ExcalidrawWithCSS = dynamic(
   async () => {
-    const module = await import('@excalidraw/excalidraw');
-    return module.Excalidraw;
+    const { Excalidraw } = await import('@excalidraw/excalidraw');
+    return Excalidraw;
   },
-  { ssr: false }
+  {
+    ssr: false,
+    loading: () => (
+      <div className="w-full h-full flex items-center justify-center bg-[#0a0a0f]">
+        <div className="flex flex-col items-center gap-3">
+          <RefreshCw className="w-5 h-5 animate-spin text-accent-primary/60" />
+          <span className="text-xs text-text-muted">Loading canvas...</span>
+        </div>
+      </div>
+    ),
+  }
 );
 
 interface ExcalidrawWrapperProps {
@@ -21,13 +34,18 @@ export default function ExcalidrawWrapper({ board, onChange, refCallback }: Exca
   const [initialData, setInitialData] = useState<any>(null);
 
   useEffect(() => {
-    if (board && board.data) {
+    if (board) {
       try {
-        const parsed = JSON.parse(board.data);
+        const parsed = board.data ? JSON.parse(board.data) : [];
+        const elements = Array.isArray(parsed) ? parsed : [];
         setInitialData({
-          elements: parsed,
-          appState: { viewBackgroundColor: '#0a0a0f', theme: 'dark' },
-          scrollToContent: true,
+          elements: elements,
+          appState: {
+            viewBackgroundColor: '#0a0a0f',
+            theme: 'dark',
+            gridSize: null,
+          },
+          scrollToContent: elements.length > 0,
         });
       } catch {
         setInitialData({
@@ -40,30 +58,31 @@ export default function ExcalidrawWrapper({ board, onChange, refCallback }: Exca
 
   if (!initialData) {
     return (
-      <div className="h-full flex items-center justify-center text-text-muted text-xs italic bg-bg-primary">
-        Loading canvas...
+      <div className="w-full h-full flex items-center justify-center bg-[#0a0a0f]">
+        <div className="flex flex-col items-center gap-3">
+          <RefreshCw className="w-5 h-5 animate-spin text-accent-primary/60" />
+          <span className="text-xs text-text-muted">Loading canvas...</span>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="w-full h-[600px] border border-border rounded-xl overflow-hidden bg-bg-primary relative">
-      <Excalidraw
+    <div className="w-full h-full">
+      <ExcalidrawWithCSS
         excalidrawAPI={refCallback}
         initialData={initialData}
-        onChange={(elements) => onChange([...elements])}
+        onChange={(elements) => onChange(elements && elements.length > 0 ? elements : [])}
         theme="dark"
         UIOptions={{
           canvasActions: {
             changeViewBackgroundColor: false,
             clearCanvas: true,
-            export: {
-              saveFileToDisk: true,
-            },
             loadScene: true,
             toggleTheme: false,
           },
         }}
+        viewModeEnabled={false}
       />
     </div>
   );

@@ -9,9 +9,8 @@ const getClient = () => {
 };
 
 export const getGeminiModel = () => {
-  return getClient().getGenerativeModel({
-    model: process.env.GEMINI_MODEL || 'gemini-2.0-flash',
-  });
+  const model = process.env.GEMINI_MODEL || 'gemini-2.0-flash';
+  return getClient().getGenerativeModel({ model });
 };
 
 export const generateContent = async (prompt: string) => {
@@ -24,8 +23,12 @@ export const generateWithSystemPrompt = async (
   systemPrompt: string,
   userPrompt: string
 ) => {
-  const model = getGeminiModel();
-  const result = await model.generateContent([systemPrompt, userPrompt]);
+  const model = process.env.GEMINI_MODEL || 'gemini-2.0-flash';
+  const genModel = getClient().getGenerativeModel({
+    model,
+    systemInstruction: systemPrompt,
+  });
+  const result = await genModel.generateContent(userPrompt);
   return result.response.text();
 };
 
