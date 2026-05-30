@@ -4,7 +4,7 @@ import { useState, useEffect, useRef } from 'react';
 import WhiteboardList from '@/components/whiteboard/whiteboard-list';
 import ExcalidrawWrapper from '@/components/whiteboard/excalidraw-wrapper';
 import AIDiagramPrompt from '@/components/whiteboard/ai-diagram-prompt';
-import { PenTool, Download, Share2, Maximize2, Clock, Sparkles, Edit2, Check, X } from 'lucide-react';
+import { PenTool, Download, Maximize2, Clock, Edit2, Check, X } from 'lucide-react';
 
 export default function WhiteboardPage() {
   const [boards, setBoards] = useState<any[]>([]);
@@ -13,7 +13,6 @@ export default function WhiteboardPage() {
   const [saving, setSaving] = useState(false);
   const [editingTitle, setEditingTitle] = useState(false);
   const [editingTitleValue, setEditingTitleValue] = useState('');
-  const [apiReady, setApiReady] = useState(false);
   const excalidrawAPIRef = useRef<any>(null);
   const debounceTimerRef = useRef<NodeJS.Timeout | null>(null);
 
@@ -41,7 +40,6 @@ export default function WhiteboardPage() {
 
   const handleSelectBoard = (id: string) => {
     setActiveBoardId(id);
-    setApiReady(false);
     excalidrawAPIRef.current = null;
   };
 
@@ -489,7 +487,6 @@ export default function WhiteboardPage() {
                 onChange={handleCanvasChange}
                 refCallback={(api) => { 
                   excalidrawAPIRef.current = api;
-                  setApiReady(!!api);
                 }}
               />
             </div>

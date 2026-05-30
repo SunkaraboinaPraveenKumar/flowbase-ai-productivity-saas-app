@@ -1,5 +1,5 @@
 /**
- * FlowBase Design System & Theme Tokens
+ * Spark Design System & Theme Tokens
  * Dark mode first, glassmorphism accents, violet/cyan palette
  */
 

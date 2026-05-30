@@ -24,7 +24,7 @@ export default function AIAssistantPage() {
   const fetchHistory = async () => {
     // Basic initialization
     setMessages([
-      { id: 'welcome', role: 'assistant', content: "Hello! I am your FlowBase workspace coordinator. Ask me to schedule meetings, write notes, or create custom boards." }
+      { id: 'welcome', role: 'assistant', content: "Hello! I am your Spark workspace coordinator. Ask me to schedule meetings, write notes, or create custom boards." }
     ]);
   };
 
@@ -96,7 +96,7 @@ export default function AIAssistantPage() {
           </h3>
           <button 
             onClick={() => setMessages([
-              { id: 'welcome', role: 'assistant', content: "Hello! I am your FlowBase workspace coordinator. Ask me to schedule meetings, write notes, or create custom boards." }
+              { id: 'welcome', role: 'assistant', content: "Hello! I am your Spark workspace coordinator. Ask me to schedule meetings, write notes, or create custom boards." }
             ])}
             className="p-1 rounded hover:bg-bg-secondary border border-border text-text-secondary hover:text-accent-rose"
             title="Clear Chat Logs"

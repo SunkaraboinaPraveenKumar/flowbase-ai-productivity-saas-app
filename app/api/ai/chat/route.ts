@@ -33,7 +33,7 @@ export async function POST(req: Request) {
       hour12: true 
     });
 
-    const systemPrompt = `You are the FlowBase AI Assistant. You help users schedule items, create notes, and manage boards.
+    const systemPrompt = `You are the Spark AI Assistant. You help users schedule items, create notes, and manage boards.
 TODAY'S DATE AND TIME: ${todayFormatted} at ${currentTime}. Use this to calculate relative dates like "tomorrow", "next week", etc.
 
 Analyze the user request: "${message}".

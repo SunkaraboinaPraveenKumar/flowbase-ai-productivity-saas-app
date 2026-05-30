@@ -34,7 +34,6 @@ const RichEditor = forwardRef<RichEditorHandle, RichEditorProps>(function RichEd
   const [showColorPicker, setShowColorPicker] = useState(false);
   const colorPickerRef = useRef<HTMLDivElement>(null);
   const [showIconPicker, setShowIconPicker] = useState(false);
-  const iconPickerRef = useRef<HTMLDivElement>(null);
 
   const [saveTimeout, setSaveTimeout] = useState<NodeJS.Timeout | null>(null);
 
@@ -101,29 +100,29 @@ const RichEditor = forwardRef<RichEditorHandle, RichEditorProps>(function RichEd
 
   // Close color picker on outside click
   useEffect(() => {
+    if (!showColorPicker) return;
+    
     function handleClickOutside(event: MouseEvent) {
       if (colorPickerRef.current && !colorPickerRef.current.contains(event.target as Node)) {
         setShowColorPicker(false);
       }
     }
-    if (showColorPicker) {
-      document.addEventListener('mousedown', handleClickOutside);
-      return () => document.removeEventListener('mousedown', handleClickOutside);
-    }
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
   }, [showColorPicker]);
 
   // Close icon picker on outside click
   useEffect(() => {
+    if (!showIconPicker) return;
+    
     function handleClickOutside(event: MouseEvent) {
       const root = document.getElementById('icon-picker-root');
       if (root && !root.contains(event.target as Node)) {
         setShowIconPicker(false);
       }
     }
-    if (showIconPicker) {
-      document.addEventListener('mousedown', handleClickOutside);
-      return () => document.removeEventListener('mousedown', handleClickOutside);
-    }
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
   }, [showIconPicker]);
 
   // Voice stream callback
@@ -158,7 +157,6 @@ const RichEditor = forwardRef<RichEditorHandle, RichEditorProps>(function RichEd
         const idx = fullText.indexOf(selectedText);
         if (idx !== -1) {
           // Walk through the document to find the exact position and replace
-          let charCount = 0;
           let replaceFrom = -1;
           let replaceTo = -1;
           state.doc.descendants((node, pos) => {
@@ -171,6 +169,7 @@ const RichEditor = forwardRef<RichEditorHandle, RichEditorProps>(function RichEd
                 return false;
               }
             }
+            return true;
           });
           if (replaceFrom !== -1) {
             editor.chain().focus()

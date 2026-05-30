@@ -7,7 +7,7 @@ import { cn } from "@/lib/utils";
 const geist = Geist({subsets:['latin'],variable:'--font-sans'});
 
 export const metadata: Metadata = {
-  title: 'FlowBase - AI Productivity Workspace',
+  title: 'Spark - AI Productivity Workspace',
   description: 'Your entire workflow. One intelligent space.',
 };
 

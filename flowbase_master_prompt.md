@@ -1,12 +1,12 @@
-# FlowBase — Complete AI Productivity SaaS App: Master Build Prompt
+# Spark — Complete AI Productivity SaaS App: Master Build Prompt
 
 ---
 
 ## Project Overview
 
-Build a **full-stack AI productivity SaaS application called FlowBase** using **Next.js 14+ (App Router)**, **Neon PostgreSQL + Drizzle ORM**, **Clerk authentication**, **AssemblyAI** (streaming speech-to-text + voice agent), **LiveBlocks** (real-time collaboration), **Google Gemini AI**, **Anthropic Claude API**, **Tiptap rich text editor**, and **Excalidraw** for the whiteboard. Deploy on **Vercel**.
+Build a **full-stack AI productivity SaaS application called Spark** using **Next.js 14+ (App Router)**, **Neon PostgreSQL + Drizzle ORM**, **Clerk authentication**, **AssemblyAI** (streaming speech-to-text + voice agent), **LiveBlocks** (real-time collaboration), **Google Gemini AI**, **Anthropic Claude API**, **Tiptap rich text editor**, and **Excalidraw** for the whiteboard. Deploy on **Vercel**.
 
-FlowBase is an all-in-one productivity workspace that combines: an AI assistant, task/Kanban board, calendar with drag-and-drop scheduling, voice-powered notes, collaborative whiteboard, pages & spaces (like Notion), an AI template builder for mini-apps, and a smart dashboard — all inside a single, beautifully designed product.
+Spark is an all-in-one productivity workspace that combines: an AI assistant, task/Kanban board, calendar with drag-and-drop scheduling, voice-powered notes, collaborative whiteboard, pages & spaces (like Notion), an AI template builder for mini-apps, and a smart dashboard — all inside a single, beautifully designed product.
 
 The UI must be **world-class**: dark-mode first, glassmorphism accents, smooth Framer Motion animations, a professional sidebar, and consistent design tokens throughout. Every page must feel cohesive, polished, and production-ready — not like a tutorial project.
 
@@ -405,7 +405,7 @@ NEXT_PUBLIC_LIVEBLOCKS_PUBLIC_KEY=
 **Sections to build:**
 
 ### 1.1 Navbar
-- Logo: "FlowBase" in Syne font, violet gradient text
+- Logo: "Spark" in Syne font, violet gradient text
 - Nav links: Features, How it Works, Pricing, Changelog
 - CTA buttons: "Sign In" (ghost) + "Get Started Free" (violet filled, glow effect)
 - Sticky with backdrop blur on scroll
@@ -468,7 +468,7 @@ On first sign-in/sign-up: call `/api/auth/sync` server action to upsert the user
 **Design**: Fixed left sidebar, 260px wide when expanded, collapses to 68px (icon-only) with smooth CSS transition. Dark background matching `--bg-secondary`.
 
 **Top section:**
-- FlowBase logo + app name (hidden when collapsed)
+- Spark logo + app name (hidden when collapsed)
 - User avatar + name from Clerk (hidden when collapsed)
 - Collapse/expand toggle button
 
@@ -1109,8 +1109,8 @@ Available in **Notes editor** and **Pages editor**:
 ```typescript
 // /hooks/use-voice-agent.ts
 // 1. Use AssemblyAI Voice Agent API (two-way conversation)
-// 2. System prompt: "You are FlowBase AI assistant. Help users manage their tasks, calendar, notes, and workspace..."
-// 3. Greeting: "Hey! I'm your FlowBase AI. What would you like to work on today?"
+// 2. System prompt: "You are Spark AI assistant. Help users manage their tasks, calendar, notes, and workspace..."
+// 3. Greeting: "Hey! I'm your Spark AI. What would you like to work on today?"
 // 4. On user speech: STT → AI intent detection → TTS response played back to user
 // 5. On detecting an action (add task, create note, etc.): emit an event to render Action Confirm Card in chat UI
 // 6. Stop conversation on button click or after 5 minutes of inactivity
@@ -1273,4 +1273,4 @@ All lists use staggered entrance. Dialogs scale in. Cards lift on hover (`transl
 
 ---
 
-*This is the complete master prompt for building FlowBase. Implement each chapter sequentially, commit to a new branch per chapter, push to GitHub, and review with an AI code reviewer before merging to main. The result should be a production-ready, deployable AI productivity SaaS application.*
+*This is the complete master prompt for building Spark. Implement each chapter sequentially, commit to a new branch per chapter, push to GitHub, and review with an AI code reviewer before merging to main. The result should be a production-ready, deployable AI productivity SaaS application.*

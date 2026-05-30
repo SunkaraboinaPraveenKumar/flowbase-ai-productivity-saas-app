@@ -1,7 +1,6 @@
 'use client';
 
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
 import { useUser, UserButton } from '@clerk/nextjs';
 import { 
   Sparkles, 
@@ -19,7 +18,6 @@ import { motion } from 'framer-motion';
 
 export default function LandingPage() {
   const { isSignedIn, user, isLoaded } = useUser();
-  const router = useRouter();
 
   // Optional: Auto-redirect logged-in users to dashboard
   // useEffect(() => {
@@ -70,7 +68,7 @@ export default function LandingPage() {
       <nav className="fixed top-0 left-0 right-0 h-20 border-b border-border bg-bg-primary/70 backdrop-blur-md z-50 flex items-center justify-between px-6 md:px-12">
         <Link href="/" className="text-2xl font-bold text-text-gradient font-display flex items-center gap-2">
           <Sparkles className="w-6 h-6 text-accent-primary" />
-          <span>FlowBase</span>
+          <span>Spark</span>
         </Link>
         <div className="hidden md:flex items-center gap-8 text-sm text-text-secondary">
           <a href="#features" className="hover:text-text-primary transition-colors">Features</a>
@@ -119,7 +117,7 @@ export default function LandingPage() {
         >
           <div className="inline-flex items-center gap-2 bg-accent-primary/10 border border-accent-primary/20 px-3 py-1.5 rounded-full text-xs font-semibold text-accent-primary">
             <Zap className="w-3.5 h-3.5" />
-            <span>Introducing FlowBase 1.0</span>
+            <span>Introducing Spark 1.0</span>
           </div>
 
           <h1 className="text-5xl md:text-7xl font-bold font-display leading-tight max-w-4xl mx-auto">
@@ -128,7 +126,7 @@ export default function LandingPage() {
           </h1>
 
           <p className="text-lg md:text-xl text-text-secondary max-w-2xl mx-auto font-medium">
-            FlowBase combines an AI assistant, calendar, task board, voice notes, and canvas into a unified collaborative environment.
+            Spark combines an AI assistant, calendar, task board, voice notes, and canvas into a unified collaborative environment.
           </p>
 
           <div className="flex flex-col sm:flex-row justify-center items-center gap-4 pt-4">
@@ -335,10 +333,10 @@ export default function LandingPage() {
         <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6">
           <div className="flex items-center gap-2 text-text-secondary font-semibold">
             <Sparkles className="w-5 h-5 text-accent-primary" />
-            <span>FlowBase Workspace</span>
+            <span>Spark Workspace</span>
           </div>
           <div className="text-xs text-text-muted">
-            &copy; {new Date().getFullYear()} FlowBase. All rights reserved. Built with Next.js & Gemini.
+            &copy; {new Date().getFullYear()} Spark. All rights reserved. Built with Next.js & Gemini.
           </div>
         </div>
       </footer>

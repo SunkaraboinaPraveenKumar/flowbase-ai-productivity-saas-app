@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Sparkles, RefreshCw, X } from 'lucide-react';
+import { Sparkles, RefreshCw } from 'lucide-react';
 import { Popover, PopoverTrigger, PopoverContent } from '@/components/ui/popover';
 
 interface AIDiagramPromptProps {

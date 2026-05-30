@@ -73,7 +73,7 @@ export function useAssemblyStreaming({
         const sentences = [
           'This is a demonstration of AssemblyAI speech to text streaming.',
           'As you speak, text is sent through WebSockets and rendered at your editor cursor.',
-          'FlowBase provides collaborative, real-time pages and smart assistant controls.',
+          'Spark provides collaborative, real-time pages and smart assistant controls.',
         ];
         let index = 0;
         mockIntervalRef.current = setInterval(() => {

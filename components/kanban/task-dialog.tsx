@@ -44,7 +44,7 @@ export default function TaskDialog({ isOpen, onClose, onSave, onDelete, task, co
       // Default mock comments
       setComments([
         { id: '1', author: 'Clerk User', text: 'Working on getting this implemented by tomorrow morning.', time: '2 hours ago' },
-        { id: '2', author: 'FlowBase Bot', text: 'Synced to calendar tracker.', time: '1 hour ago' }
+        { id: '2', author: 'Spark Bot', text: 'Synced to calendar tracker.', time: '1 hour ago' }
       ]);
     } else {
       setTitle('');

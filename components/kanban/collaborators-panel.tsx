@@ -6,8 +6,8 @@ import { useState } from 'react';
 export default function CollaboratorsPanel() {
   const [invitedEmail, setInvitedEmail] = useState('');
   const [collaborators, setCollaborators] = useState([
-    { email: 'collab1@flowbase.ai', status: 'accepted', initials: 'C1' },
-    { email: 'collab2@flowbase.ai', status: 'pending', initials: 'C2' }
+    { email: 'collab1@spark.ai', status: 'accepted', initials: 'C1' },
+    { email: 'collab2@spark.ai', status: 'pending', initials: 'C2' }
   ]);
 
   const handleInvite = (e: React.FormEvent) => {

@@ -82,7 +82,7 @@ export default function Sidebar({
         {!isCollapsed && (
           <Link href="/dashboard" className="text-xl font-bold text-text-gradient font-display flex items-center gap-2">
             <Sparkles className="w-5 h-5 text-accent-primary" />
-            <span>FlowBase</span>
+            <span>Spark</span>
           </Link>
         )}
         {isCollapsed && (

@@ -8,7 +8,7 @@ import {
 } from 'drizzle-orm/pg-core';
 
 // Users table
-export const users = pgTable('flowbase_users', {
+export const users = pgTable('spark_users', {
   id: uuid('id').defaultRandom().primaryKey(),
   clerkId: text('clerk_id').unique(),
   email: text('email').notNull().unique(),
@@ -22,7 +22,7 @@ export const users = pgTable('flowbase_users', {
 });
 
 // Calendar tasks
-export const calendarTasks = pgTable('flowbase_calendar_tasks', {
+export const calendarTasks = pgTable('spark_calendar_tasks', {
   id: uuid('id').defaultRandom().primaryKey(),
   userId: uuid('user_id')
     .notNull()
@@ -39,7 +39,7 @@ export const calendarTasks = pgTable('flowbase_calendar_tasks', {
 });
 
 // Kanban boards
-export const kanbanBoards = pgTable('flowbase_kanban_boards', {
+export const kanbanBoards = pgTable('spark_kanban_boards', {
   id: uuid('id').defaultRandom().primaryKey(),
   userId: uuid('user_id')
     .notNull()
@@ -52,7 +52,7 @@ export const kanbanBoards = pgTable('flowbase_kanban_boards', {
 });
 
 // Kanban columns
-export const kanbanColumns = pgTable('flowbase_kanban_columns', {
+export const kanbanColumns = pgTable('spark_kanban_columns', {
   id: uuid('id').defaultRandom().primaryKey(),
   boardId: uuid('board_id')
     .notNull()
@@ -63,7 +63,7 @@ export const kanbanColumns = pgTable('flowbase_kanban_columns', {
 });
 
 // Kanban tasks
-export const kanbanTasks = pgTable('flowbase_kanban_tasks', {
+export const kanbanTasks = pgTable('spark_kanban_tasks', {
   id: uuid('id').defaultRandom().primaryKey(),
   columnId: uuid('column_id')
     .notNull()
@@ -86,7 +86,7 @@ export const kanbanTasks = pgTable('flowbase_kanban_tasks', {
 });
 
 // Kanban collaborators
-export const kanbanCollaborators = pgTable('flowbase_kanban_collaborators', {
+export const kanbanCollaborators = pgTable('spark_kanban_collaborators', {
   id: uuid('id').defaultRandom().primaryKey(),
   boardId: uuid('board_id')
     .notNull()
@@ -97,7 +97,7 @@ export const kanbanCollaborators = pgTable('flowbase_kanban_collaborators', {
 });
 
 // Notes
-export const notes = pgTable('flowbase_notes', {
+export const notes = pgTable('spark_notes', {
   id: uuid('id').defaultRandom().primaryKey(),
   userId: uuid('user_id')
     .notNull()
@@ -114,7 +114,7 @@ export const notes = pgTable('flowbase_notes', {
 });
 
 // Whiteboards
-export const whiteboards = pgTable('flowbase_whiteboards', {
+export const whiteboards = pgTable('spark_whiteboards', {
   id: uuid('id').defaultRandom().primaryKey(),
   userId: uuid('user_id')
     .notNull()
@@ -128,7 +128,7 @@ export const whiteboards = pgTable('flowbase_whiteboards', {
 });
 
 // Spaces
-export const spaces = pgTable('flowbase_spaces', {
+export const spaces = pgTable('spark_spaces', {
   id: uuid('id').defaultRandom().primaryKey(),
   userId: uuid('user_id')
     .notNull()
@@ -143,7 +143,7 @@ export const spaces = pgTable('flowbase_spaces', {
 });
 
 // Pages
-export const pages = pgTable('flowbase_pages', {
+export const pages = pgTable('spark_pages', {
   id: uuid('id').defaultRandom().primaryKey(),
   spaceId: uuid('space_id')
     .notNull()
@@ -163,7 +163,7 @@ export const pages = pgTable('flowbase_pages', {
 });
 
 // Space members
-export const spaceMembers = pgTable('flowbase_space_members', {
+export const spaceMembers = pgTable('spark_space_members', {
   id: uuid('id').defaultRandom().primaryKey(),
   spaceId: uuid('space_id')
     .notNull()
@@ -175,7 +175,7 @@ export const spaceMembers = pgTable('flowbase_space_members', {
 });
 
 // AI-generated templates
-export const aiTemplates = pgTable('flowbase_ai_templates', {
+export const aiTemplates = pgTable('spark_ai_templates', {
   id: uuid('id').defaultRandom().primaryKey(),
   userId: uuid('user_id')
     .notNull()
@@ -191,7 +191,7 @@ export const aiTemplates = pgTable('flowbase_ai_templates', {
 });
 
 // AI chat history
-export const aiChatHistory = pgTable('flowbase_ai_chat_history', {
+export const aiChatHistory = pgTable('spark_ai_chat_history', {
   id: uuid('id').defaultRandom().primaryKey(),
   userId: uuid('user_id')
     .notNull()
@@ -204,7 +204,7 @@ export const aiChatHistory = pgTable('flowbase_ai_chat_history', {
 });
 
 // Categories
-export const categories = pgTable('flowbase_categories', {
+export const categories = pgTable('spark_categories', {
   id: uuid('id').defaultRandom().primaryKey(),
   userId: uuid('user_id')
     .notNull()
@@ -216,7 +216,7 @@ export const categories = pgTable('flowbase_categories', {
 });
 
 // Activity log
-export const activityLog = pgTable('flowbase_activity_log', {
+export const activityLog = pgTable('spark_activity_log', {
   id: uuid('id').defaultRandom().primaryKey(),
   userId: uuid('user_id')
     .notNull()
