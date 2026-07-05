@@ -3,6 +3,7 @@ import { NextResponse } from 'next/server';
 import { db } from '@/db';
 import { users } from '@/db/schema';
 import { eq } from 'drizzle-orm';
+import { ensureUserWorkspaceSeeded } from '@/lib/seed-workspace';
 
 export async function POST() {
   try {
@@ -46,6 +47,8 @@ export async function POST() {
         plan: 'free',
       });
     }
+
+    await ensureUserWorkspaceSeeded(user.id, { name, email });
 
     return NextResponse.json(
       { success: true, email },

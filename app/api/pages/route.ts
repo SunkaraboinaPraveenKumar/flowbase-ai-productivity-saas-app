@@ -38,11 +38,7 @@ export async function GET(req: Request) {
     return NextResponse.json({ error: 'Bad Request' }, { status: 400 });
   } catch (error) {
     console.error('Pages GET error:', error);
-    // Mock pages for demo
-    return NextResponse.json({ pages: [
-      { id: 'p1', spaceId: 's1', title: 'Developer Wiki', content: '{"type":"doc","content":[{"type":"paragraph","content":[{"type":"text","text":"Welcome to the Developer Wiki."}]}]}', icon: '📄', updatedAt: new Date().toISOString() },
-      { id: 'p2', spaceId: 's1', title: 'Database schema configuration', content: '{"type":"doc","content":[{"type":"paragraph","content":[{"type":"text","text":"This details Neon and Drizzle setups."}]}]}', icon: '🗄️', updatedAt: new Date().toISOString() }
-    ]});
+    return NextResponse.json({ pages: [] });
   }
 }
 

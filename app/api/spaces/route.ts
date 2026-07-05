@@ -22,11 +22,7 @@ export async function GET() {
     return NextResponse.json({ spaces: allSpaces });
   } catch (error) {
     console.error('Spaces GET error:', error);
-    // Mock spaces for demo
-    return NextResponse.json({ spaces: [
-      { id: 's1', name: 'Engineering Space', description: 'Development guides and schemas', color: '#7c3aed', icon: '📁', updatedAt: new Date().toISOString() },
-      { id: 's2', name: 'Product Marketing', description: 'Product hunt and design assets', color: '#06b6d4', icon: '💼', updatedAt: new Date().toISOString() }
-    ]});
+    return NextResponse.json({ spaces: [] });
   }
 }
 

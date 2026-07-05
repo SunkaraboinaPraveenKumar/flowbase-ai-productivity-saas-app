@@ -22,10 +22,7 @@ export async function GET() {
     return NextResponse.json({ whiteboards: boards });
   } catch (error) {
     console.error('Whiteboard GET error:', error);
-    // Mock whiteboard for demo
-    return NextResponse.json({ whiteboards: [
-      { id: 'w1', name: 'Software Architecture Flow', data: '[]', updatedAt: new Date().toISOString() }
-    ]});
+    return NextResponse.json({ whiteboards: [] });
   }
 }
 

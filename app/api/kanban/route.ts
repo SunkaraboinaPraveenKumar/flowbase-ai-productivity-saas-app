@@ -41,20 +41,7 @@ export async function GET(req: Request) {
     return NextResponse.json({ error: 'Bad Request' }, { status: 400 });
   } catch (error) {
     console.error('Kanban GET error:', error);
-    // Mock data for demo
-    return NextResponse.json({
-      boards: [{ id: 'b1', name: 'Product Launch Board', color: '#7c3aed' }],
-      columns: [
-        { id: 'c1', boardId: 'b1', name: 'To Do', order: 0 },
-        { id: 'c2', boardId: 'b1', name: 'In Progress', order: 1 },
-        { id: 'c3', boardId: 'b1', name: 'Review', order: 2 }
-      ],
-      tasks: [
-        { id: 't1', columnId: 'c1', boardId: 'b1', title: 'Design landing mockup', priority: 'high', label: 'Design' },
-        { id: 't2', columnId: 'c2', boardId: 'b1', title: 'Setup Clerk auth middleware', priority: 'urgent', label: 'Backend' },
-        { id: 't3', columnId: 'c3', boardId: 'b1', title: 'Create DB tables index', priority: 'medium', label: 'Database' }
-      ]
-    });
+    return NextResponse.json({ boards: [], columns: [], tasks: [] });
   }
 }
 

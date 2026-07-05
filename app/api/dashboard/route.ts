@@ -62,20 +62,13 @@ export async function GET() {
     });
   } catch (error) {
     console.error('Dashboard telemetry fetch error:', error);
-    // Mock fallback values for locally run environment without a connected Neon DB
     return NextResponse.json({
-      calendarCount: 2,
-      kanbanCount: 1,
-      notesCount: 4,
-      spacesCount: 2,
-      upcomingTasks: [
-        { id: '1', title: 'Marketing sync meeting', scheduledAt: new Date(Date.now() + 3600 * 1000 * 24).toISOString(), color: '#7c3aed' },
-        { id: '2', title: 'Review SaaS dashboard components', scheduledAt: new Date(Date.now() + 3600 * 1000 * 48).toISOString(), color: '#06b6d4' }
-      ],
-      activities: [
-        { id: 'act-1', action: 'Created Board', entityType: 'board', entityName: 'Product Launch Kanban', createdAt: new Date(Date.now() - 3600 * 1000).toISOString() },
-        { id: 'act-2', action: 'Updated Note', entityType: 'note', entityName: 'Workspace Outline', createdAt: new Date(Date.now() - 3600 * 1000 * 3).toISOString() }
-      ]
+      calendarCount: 0,
+      kanbanCount: 0,
+      notesCount: 0,
+      spacesCount: 0,
+      upcomingTasks: [],
+      activities: []
     });
   }
 }

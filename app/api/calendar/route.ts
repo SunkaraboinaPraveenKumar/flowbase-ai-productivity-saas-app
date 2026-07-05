@@ -17,12 +17,7 @@ export async function GET() {
     return NextResponse.json({ tasks });
   } catch (error) {
     console.error('Calendar GET error:', error);
-    // Mock data for demo
-    return NextResponse.json({ tasks: [
-      { id: '1', title: 'Marketing sync meeting', scheduledAt: new Date(Date.now() + 3600 * 1000 * 2).toISOString(), isDraft: false, taskType: 'meeting', color: '#7c3aed', category: 'Work' },
-      { id: '2', title: 'Prepare design tokens', scheduledAt: new Date(Date.now() + 3600 * 1000 * 24).toISOString(), isDraft: false, taskType: 'task', color: '#06b6d4', category: 'Design' },
-      { id: '3', title: 'Unscheduled draft idea', scheduledAt: null, isDraft: true, taskType: 'reminder', color: '#f59e0b', category: 'Personal' }
-    ]});
+    return NextResponse.json({ tasks: [] });
   }
 }
 

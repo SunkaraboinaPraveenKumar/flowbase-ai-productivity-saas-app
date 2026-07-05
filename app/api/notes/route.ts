@@ -22,11 +22,7 @@ export async function GET() {
     return NextResponse.json({ notes: userNotes });
   } catch (error) {
     console.error('Notes GET error:', error);
-    // Mock notes for demo
-    return NextResponse.json({ notes: [
-      { id: 'n1', title: 'Product Launch Brainstorming', content: '{"type":"doc","content":[{"type":"paragraph","content":[{"type":"text","text":"We should launch the SaaS on Product Hunt next Tuesday. Highlight live streaming STT capabilities using AssemblyAI."}]}]}', isPinned: true, isTrashed: false, color: '#16161f', icon: '🚀', category: 'Work', updatedAt: new Date().toISOString() },
-      { id: 'n2', title: 'Gym Workout Routine', content: '{"type":"doc","content":[{"type":"paragraph","content":[{"type":"text","text":"Monday: Chest & Shoulder.\\nWednesday: Legs & Abs.\\nFriday: Back & Arms."}]}]}', isPinned: false, isTrashed: false, color: '#1c1c28', icon: '💪', category: 'Personal', updatedAt: new Date(Date.now() - 3600*1000).toISOString() }
-    ]});
+    return NextResponse.json({ notes: [] });
   }
 }
 

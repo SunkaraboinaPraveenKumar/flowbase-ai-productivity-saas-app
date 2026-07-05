@@ -17,10 +17,7 @@ export async function GET() {
     return NextResponse.json({ templates });
   } catch (error) {
     console.error('Templates GET error:', error);
-    // Mock template list
-    return NextResponse.json({ templates: [
-      { id: 't1', name: 'Workout Logger', prompt: 'gym tracker', generatedSchema: '{"fields":[]}', generatedUi: '{"components":[]}', appState: '[]', addedToSidebar: false }
-    ]});
+    return NextResponse.json({ templates: [] });
   }
 }
 
